@@ -95,6 +95,23 @@ inline bool operator!=(TimeStamp lhs, TimeStamp rhs)
     return ! (lhs.microSecondsSinceEpoch() == rhs.microSecondsSinceEpoch());
 }
 
+/// get time difference of two timestamps
+/// @param high,low
+/// @return high-low in seconds
+inline double timeDifference(TimeStamp high, TimeStamp low)
+{
+    int64_t diff = high.microSecondsSinceEpoch() - low.microSecondsSinceEpoch();
+    return static_cast<double>(diff) / TimeStamp::kMicroSecondPerSecond;
+}
+
+/// add seconds to given timestamp
+/// @return timestamp + seconds as new TimeStamp
+inline TimeStamp addTime(TimeStamp timestamp, double seconds)
+{
+    int64_t delta = static_cast<int64_t>(seconds * TimeStamp::kMicroSecondPerSecond);
+    return TimeStamp(timestamp.microSecondsSinceEpoch() + delta);
+}
+
 } // namespace sh
 
 #endif // SH_BASE_TIMESTAMP_H

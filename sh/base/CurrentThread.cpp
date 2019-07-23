@@ -22,7 +22,7 @@ string stackTrace(bool demangle)
     string stack;
     const int max_frames = 200;
     void *frame[max_frames];
-    int nptrs = ::backtrace_symbols(frame, max_frames);
+    int nptrs = ::backtrace(frame, max_frames);
     char **strings = ::backtrace_symbols(frame, nptrs);
     if (strings)
     {

@@ -7,7 +7,7 @@
 namespace sh
 {
 
-// 微秒级时间戳  UTC 0区 世界时间
+// 微秒级时间戳  UTC 0区 世界时间 支持获取本地时间
 class TimeStamp : public sh::copyable
                   //public boost::equality_comparable<TimeStamp>, // 去掉boost，自己实现
                   //public boost::less_than_comparable<TimeStamp>

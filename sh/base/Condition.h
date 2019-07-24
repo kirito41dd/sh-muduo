@@ -1,4 +1,5 @@
 // 包装条件变量
+// 一般作底层，不直接使用
 
 #ifndef SH_BASE_CONDITION_H
 #define SH_BASE_CONDITION_H

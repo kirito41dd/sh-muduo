@@ -6,6 +6,7 @@
 #include "sh/base/CurrentThread.h"
 #include "sh/base/Exception.h"
 #include "sh/base/Date.h"
+#include "sh/base/Mutex.h"
 #include <stdio.h>
 #include <iostream>
 #include <unistd.h>
@@ -30,7 +31,7 @@ void test_Exception() throw(Exception)
     if(1)
     throw Exception("err");
 }
-
+MutexLock mutex;
 int main(){
 
     test_timestamp();
@@ -43,6 +44,9 @@ int main(){
     }
 
     cout<<Date::getLocalDate().toIsoString()<<endl;
-
+    cout<<"locking"<<endl;
+    {MutexLockGuard lock(mutex);}
+    MutexLockGuard lock2(mutex);
+    cout<<CurrentThread::tidString()<<endl;
     return 0;
 }

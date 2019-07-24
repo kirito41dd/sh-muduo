@@ -11,10 +11,10 @@ namespace sh
 namespace CurrentThread
 {
 
-extern __thread int         t_cachedTid = 0;
-extern __thread char        t_tidString[32];
-extern __thread int         t_tidStringLenght = 6;
-extern __thread const char  *t_threadName = "unknown";
+__thread int         t_cachedTid = 0;
+__thread char        t_tidString[32];
+__thread int         t_tidStringLenght = 6;
+__thread const char  *t_threadName = "unknown";
 static_assert(std::is_same<int, pid_t>::value, "pid_t should be int");
 
 string stackTrace(bool demangle)

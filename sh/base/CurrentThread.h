@@ -15,7 +15,7 @@ namespace CurrentThread
     extern __thread char        t_tidString[32];
     extern __thread int         t_tidStringLenght;
     extern __thread const char  *t_threadName;
-    void cacheTid();
+    void cacheTid(); // 定义在 Thread.cpp
 
     inline int tid()
     {

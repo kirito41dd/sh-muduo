@@ -3,32 +3,19 @@
 #include "sh/base/Types.h"
 #include "sh/base/noncopyable.h"
 #include "sh/base/TimeStamp.h"
+#include "sh/base/CurrentThread.h"
+#include "sh/base/Exception.h"
+#include "sh/base/Date.h"
 #include <stdio.h>
 #include <iostream>
 #include <unistd.h>
+
 using namespace std;
 using namespace sh;
-class A{int x;};
-class B{int y;};
-class C:public A,public B{int z;};
-class D:public noncopyable{};
-void foo(A a){printf("class &a\n");}
-void foo(B b){printf("class &b\n");}
-void foo(C c){printf("class &c\n");}
-void test_Types(){
-    C c;
-    A * a=&c;
-    foo(c);
-    foo(implicit_cast<A>(c));
-    //down_cast<C*>(a);
-   // foo(*down_cast<C*>((A*)&c));
-}
-void test_noncopyable(){
-    D a;
-   // D a2=a;
-}
+
+
 void test_timestamp(){
-    sh::TimeStamp time = sh::TimeStamp::now();
+    sh::TimeStamp time = sh::TimeStamp::localNow();
     cout<<time.toString()<<endl;
     cout<<time.toFormattedString()<<endl;
     sleep(1);
@@ -38,10 +25,24 @@ void test_timestamp(){
         cout<<time2.toString()<<endl;
     }
 }
+void test_Exception() throw(Exception)
+{
+    if(1)
+    throw Exception("err");
+}
 
 int main(){
-    test_Types();
-    test_noncopyable();
+
     test_timestamp();
+    cout<<CurrentThread::stackTrace(1)<<endl;
+    try{
+        test_Exception();
+    }catch(Exception e){
+        cout<<e.what()<<endl;
+        cout<<e.stackTrace()<<endl;
+    }
+
+    cout<<Date::getLocalDate().toIsoString()<<endl;
+
     return 0;
 }

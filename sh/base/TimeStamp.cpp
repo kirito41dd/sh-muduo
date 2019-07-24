@@ -18,7 +18,7 @@ using namespace sh;
 
 // 静态断言，编译期，条件为false打印提示
 static_assert(sizeof(TimeStamp) == sizeof(int64_t),
-              "TimeStamp is not same size as int64_t");
+              "TimeStamp is should be int64_t"); // https://github.com/chenshuo/muduo/issues/399
 
 
 
@@ -63,6 +63,16 @@ TimeStamp TimeStamp::now()
     struct timeval tv;
     gettimeofday(&tv, NULL);
     int64_t seconds = tv.tv_sec;
+    return TimeStamp(seconds * kMicroSecondPerSecond + tv.tv_usec);
+}
+
+TimeStamp TimeStamp::localNow()
+{
+    struct timeval tv;
+    struct tm t;
+    gettimeofday(&tv, NULL);
+    localtime_r(&tv.tv_sec, &t);  // 本地时区   如北京 utc+8
+    int64_t seconds = tv.tv_sec + t.tm_gmtoff /*时区偏移*/;
     return TimeStamp(seconds * kMicroSecondPerSecond + tv.tv_usec);
 }
 

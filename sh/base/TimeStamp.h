@@ -7,7 +7,7 @@
 namespace sh
 {
 
-// 微秒级时间戳  UTC时间 0区
+// 微秒级时间戳  UTC 0区 世界时间
 class TimeStamp : public sh::copyable
                   //public boost::equality_comparable<TimeStamp>, // 去掉boost，自己实现
                   //public boost::less_than_comparable<TimeStamp>
@@ -44,8 +44,10 @@ public:
     time_t secondsSinceEpoch() const
     { return static_cast<time_t>(microSecondsSinceEpoch_ / kMicroSecondPerSecond); }
 
-    /// get time of now.
+    /// get UTC+0 time of now.
     static TimeStamp now();
+    /// get local time of now.
+    static TimeStamp localNow();
     static TimeStamp invalid() { return TimeStamp(); } // 获取一个无效时间
 
     static TimeStamp fromUnixTime(time_t t)

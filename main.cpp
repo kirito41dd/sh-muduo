@@ -12,6 +12,10 @@
 #include "sh/base/Atomic.h"
 #include "sh/base/BlockingQueue.h"
 #include "sh/base/BoundedBlockingQueue.h"
+#include "sh/base/StringPiece.h"
+#include "sh/base/LogStream.h"
+#include "sh/base/Logging.h"
+#include "sh/base/Logging.h"
 #include <stdio.h>
 #include <boost/circular_buffer.hpp>
 #include <iostream>
@@ -21,7 +25,7 @@ using namespace std;
 using namespace sh;
 
 BoundedBlockingQueue<string> bq(3);
-
+detail::FixedBuffer<detail::kSmallBuffer> fb;
 void* run(void *){
     sleep(1);
     pthread_detach(pthread_self());
@@ -34,10 +38,13 @@ void* run(void *){
     }
 
 }
-
+LogStream l;
 int main(){
-
+    LOG_INFO << "hellow";
     pthread_t t;
+    //cout<<fb.avail()<<endl;
+    //l.formatInteger(int(10));
+    //cout<<l.buffer().toString()<<endl;
     printf("test\n");
     pthread_create(&t,NULL,run,NULL);
     int i=0;

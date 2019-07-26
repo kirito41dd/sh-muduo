@@ -42,9 +42,9 @@ namespace CurrentThread
         return t_threadName;
     }
 
-    bool isMainThread();
+    bool isMainThread(); // 定义在 Thread.cpp
 
-    void sleepUsec(int64_t usec); // for testing
+    void sleepUsec(int64_t usec); // for testing  定义在 Thread.cpp
 
     // 将C++源程序标识符(original C++ source identifier)转换成C++ ABI标识符(C++ ABI identifier)的过程
     // 称为mangle；相反的过程称为demangle。

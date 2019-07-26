@@ -18,3 +18,4 @@ gcc从4.1.2提供了__sync_*系列的built-in函数，用于提供加减和逻�
 
 模板实例化(不是特化)： `base/LogStream.h`  `base/LogStream.cpp`
 
+offsetof(TYPE, MEMBER)： 这个宏来测量成员在结构中的便宜 InetAddress.cpp #46

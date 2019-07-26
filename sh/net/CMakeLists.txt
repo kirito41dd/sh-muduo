@@ -3,5 +3,7 @@ add_library(sh_net ${DIR_NET_SRCS})
 
 
 set(HEADERS *.h)
+
+target_link_libraries(sh_net sh_base)
 #FILE(GLOB HEADERS "*.h")
 #add_custom_target(sh_net_headers SOURCES ${HEADERS})

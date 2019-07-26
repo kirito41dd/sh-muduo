@@ -164,6 +164,21 @@ Logger::~Logger()
     }
 }
 
+void Logger::setLogLevel(LogLevel level)
+{
+    g_logLevel = level;
+}
+
+void Logger::setOutput(Logger::OutputFunc func)
+{
+    g_output = func;
+}
+
+void Logger::setFlush(Logger::FlushFunc func)
+{
+    g_flush = func;
+}
+
 
 
 } // namespace sh

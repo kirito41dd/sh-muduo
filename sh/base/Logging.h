@@ -63,12 +63,12 @@ public:
     LogStream& stream() { return impl_.stream_; }
 
     static LogLevel logLevel();
-    static void setLogLevel();
+    static void setLogLevel(LogLevel level);
 
     typedef void (*OutputFunc)(const char *msg, int len);
     typedef void (*FlushFunc)();
-    static void setOutput(OutputFunc);
-    static void setFlush(FlushFunc);
+    static void setOutput(OutputFunc func);
+    static void setFlush(FlushFunc func);
     //static void setTimeZone(const TimeZone& tz)
 
 

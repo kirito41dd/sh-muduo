@@ -1,2 +1,0 @@
-
-void net_func();

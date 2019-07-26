@@ -1,2 +1,0 @@
-
-void base_func();

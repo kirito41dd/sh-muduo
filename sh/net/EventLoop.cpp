@@ -4,6 +4,7 @@
 #include "sh/base/Logging.h"
 #include "sh/net/Channel.h"
 #include "sh/base/Mutex.h"
+#include "sh/net/Poller.h"
 #include "sh/net/SocketOps.h"
 
 #include <sys/eventfd.h>
@@ -41,7 +42,7 @@ EventLoop::EventLoop()
       callingPendingFunctors_(false),
       iteration_(0),
       threadId_(CurrentThread::tid()),
-      //**poller_(NULL/* add */),
+      poller_(Poller::newDefaultPoller(this)),
       //**timerQueue_(NULL/* add later */),
       wakeupFd_(createEventfd()),
       wakeupChannel_(new Channel(this, wakeupFd_)),

@@ -1,7 +1,6 @@
 aux_source_directory(. DIR_NET_SRCS)
 add_library(sh_net ${DIR_NET_SRCS})
 
-
 set(HEADERS *.h)
 
 target_link_libraries(sh_net sh_base)

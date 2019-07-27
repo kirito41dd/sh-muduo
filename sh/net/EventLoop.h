@@ -97,7 +97,7 @@ private:
     int64_t                     iteration_;
     const pid_t                 threadId_;
     TimeStamp                   pollReturnTime_;
-    //**std::unique_ptr<Poller>     poller_;
+    std::unique_ptr<Poller>     poller_;
     //**std::unique_ptr<TimerQueue> timerQueue_;
     int                         wakeupFd_;
     // unlike in TimerQueue, which is an internal class,

@@ -1,0 +1,99 @@
+#ifndef SH_NET_CHANNEL_H
+#define SH_NET_CHANNEL_H
+
+#include "sh/base/noncopyable.h"
+#include "sh/base/TimeStamp.h"
+
+#include <functional>
+#include <memory>
+
+namespace sh
+{
+
+namespace net
+{
+
+class EventLoop; // forward declaration
+
+/// A selectable I/O channel.
+///
+/// This class doesn't own the file descriptor.
+/// The file descriptor could be a socket, an eventfd, a timerfd, or a signalfd
+class Channel : noncopyable
+{
+public:
+    typedef std::function<void()>           EventCallback;
+    typedef std::function<void(TimeStamp)>  ReadEventCallback;
+
+    Channel(EventLoop *loop, int fd);
+    ~Channel();
+
+    void handleEvent(TimeStamp receiveTime);
+    void setReadCallback(ReadEventCallback cb) { readCallback_ = cb; }
+    void setWriteCallback(EventCallback cb) { writeCallback_ = cb; }
+    void setCloseCallback(EventCallback cb) { closeCallback_ = cb; }
+    void setErrorCallback(EventCallback cb) { errorCallback_ = cb; }
+
+    /// 通过shared_ptr绑定通道的 owner
+    /// prevent（防止） the owner object being destroyed in handleEvent.
+    void tie(const std::shared_ptr<void> &obj);
+
+    int fd() const { return fd_; }
+    int events() const { return events_; }
+    void set_revents(int revt) { revents_ = revt; } // used by pollers
+    // int revents() const { return revents_; }
+    bool isNoneEvent() const { return events_ == kNoneEvent; }
+
+    void enableReading() { events_ |= kReadEvent; update(); }
+    void disableReading() { events_ &= ~kReadEvent; update(); }
+    void enableWriting() { events_ |= kWriteEvent; update(); }
+    void disableWriting() { events_ &= ~kWriteEvent; update(); }
+    void disableAll() { events_ = kNoneEvent; update(); }
+    bool isWriting() const { return events_ & kWriteEvent; }
+    bool isReading() const { return events_ & kReadEvent; }
+
+    // for Poller
+    int index() { return index_; }
+    void set_index(int idx) { index_ = idx; }
+
+    // for debug
+    string reventsToString() const;
+    string eventsToString() const;
+
+    void doNotLogHup() { logHup_ = false; }
+    EventLoop* ownerLoop() { return loop_; }
+    void remove();
+
+private:
+    static string eventsToString(int fd, int ev);
+
+    void update();
+    void handleEventWithGuard(TimeStamp receiveTime);
+
+    static const int kNoneEvent;
+    static const int kReadEvent;
+    static const int kWriteEvent;
+
+    EventLoop   *loop_;
+    const int   fd_;
+    int         events_;
+    int         revents_; // it's the received event types of epoll or poll
+    int         index_; // used by Poller
+    bool        logHup_;
+
+    std::weak_ptr<void> tie_;
+    bool                tied_;
+    bool                eventHandling_;  // 正在调用回调事件
+    bool                addedToLoop_;
+
+    ReadEventCallback   readCallback_;
+    EventCallback       writeCallback_;
+    EventCallback       closeCallback_;
+    EventCallback       errorCallback_;
+}; // class Channel
+
+} // namespace net
+
+} // namespace sh
+
+#endif // SH_NET_CHANNEL_H

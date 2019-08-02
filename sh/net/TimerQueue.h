@@ -26,6 +26,16 @@ class TimerId;
 class TimerQueue : noncopyable
 {
 public:
+    explicit TimerQueue(EventLoop *loop);
+    ~TimerQueue();
+
+    /// 在给定的时间调用回调
+    /// 如果@c interval > 0.0 则重复
+    /// 必须是线程安全的，通常被其他线程调用
+    TimerId addTimer(TimerCallback cb, TimeStamp when, double interval);
+
+    void cancel(TimerId timerId);
+
 private:
     // FIXME: 使用unique_ptr<Timer>代替源生指针
     typedef std::pair<TimeStamp, Timer *>   Entry;
@@ -33,6 +43,15 @@ private:
     typedef std::pair<Timer *, int64_t>     ActiveTimer;
     typedef std::set<ActiveTimer>           ActiveTimerSet;
 
+    void addTimerInLoop(Timer *timer);
+    void cancelInLoop(TimerId timerId);
+    // called when timerfd alarms
+    void handleRead();
+    // move out all expired timers
+    std::vector<Entry> getExpired(TimeStamp now);
+    void reset(const std::vector<Entry> &expired, TimeStamp now);
+
+    bool insert(Timer *timer);
 
 
     EventLoop *loop_;
@@ -40,7 +59,7 @@ private:
     Channel timerfdChannel_;
 
     // 小顶堆，时间截止的时间优先
-    TimerList timers_;
+    TimerList timers_;  // 与activeTimers_ 内容总是一致，timers_负责排序
 
     // for cancel()
     ActiveTimerSet activeTimers_;

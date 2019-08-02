@@ -6,8 +6,12 @@
 #include "sh/base/Mutex.h"
 #include "sh/net/Poller.h"
 #include "sh/net/SocketOps.h"
+#include "TimerQueue.h"
 
+#include <algorithm>
 #include <sys/eventfd.h>
+#include <signal.h>
+#include <unistd.h>
 
 namespace
 {
@@ -43,17 +47,34 @@ EventLoop::EventLoop()
       iteration_(0),
       threadId_(CurrentThread::tid()),
       poller_(Poller::newDefaultPoller(this)),
-      //**timerQueue_(NULL/* add later */),
+      timerQueue_(new TimerQueue(this)),
       wakeupFd_(createEventfd()),
       wakeupChannel_(new Channel(this, wakeupFd_)),
       currentActiveChannel_(NULL)
 {
-
+    LOG_DEBUG << "EventLoop created " << this << " in thread " << threadId_;
+    if (t_loopInThisThread)
+    {
+      LOG_FATAL << "Another EventLoop " << t_loopInThisThread
+                << " exists in this thread " << threadId_;
+    }
+    else
+    {
+      t_loopInThisThread = this;
+    }
+    wakeupChannel_->setReadCallback(
+                std::bind(&EventLoop::handleRead, this));
+    wakeupChannel_->enableReading();
 }
 
 EventLoop::~EventLoop()
 {
-
+    LOG_DEBUG << "EventLoop " << this << " of thread " << threadId_
+                << " destructs in thread " << CurrentThread::tid();
+    wakeupChannel_->disableAll();
+    wakeupChannel_->remove();
+    ::close(wakeupFd_);
+    t_loopInThisThread = NULL;
 }
 
 void EventLoop::loop()
@@ -61,9 +82,91 @@ void EventLoop::loop()
     assert(!looping_);
     assertInLoopThread();
     looping_ = true;
+    quit_ = false; // FIXME: what if someone calls quit() before loop() ?
+    LOG_TRACE << "EventLoop " << this << " start looping";
+
+    while(!quit_)
+    {
+        activeChannels_.clear();
+        pollReturnTime_ = poller_->poll(kPollTimeMs, &activeChannels_);
+        ++iteration_;
+        if (Logger::logLevel() <= Logger::TRACE)
+        {
+            printActiveChannels();
+        }
+        // TODO sort channel by priority
+        eventHandling_ = true;
+        for (Channel *channel : activeChannels_)
+        {
+            currentActiveChannel_ = channel;
+            currentActiveChannel_->handleEvent(pollReturnTime_);
+        }
+        currentActiveChannel_ = NULL;
+        eventHandling_ = false;
+        doPendingFunctors();
+    }
 
     LOG_TRACE << "EventLoop " << this << " stop looping";
     looping_ = false;
+}
+
+void EventLoop::quit()
+{
+    quit_ = true;
+    // There is a chance that loop() just executes while(!quit_) and exits,
+    // then EventLoop destructs, then we are accessing an invalid object.
+    // Can be fixed using mutex_ in both places.
+    if (!isInLoopThread())
+    {
+        wakeup();
+    }
+}
+
+void EventLoop::runInLoop(EventLoop::Functor cb)
+{
+    if (isInLoopThread())
+    {
+        cb();
+    }
+    else
+    {
+        queueInLoop(std::move(cb));
+    }
+}
+
+void EventLoop::queueInLoop(EventLoop::Functor cb)
+{
+    {
+    MutexLockGuard lock(mutex_);
+    pendingFunctors_.push_back(std::move(cb));
+    }
+}
+
+size_t EventLoop::queueSize() const
+{
+    MutexLockGuard lock(mutex_);
+    return pendingFunctors_.size();
+}
+
+TimerId EventLoop::runAt(TimeStamp time, TimerCallback cb)
+{
+    return timerQueue_->addTimer(std::move(cb), time, 0.0);
+}
+
+TimerId EventLoop::runAfter(double delay, TimerCallback cb)
+{
+    TimeStamp time(addTime(TimeStamp::now(), delay));
+    return runAt(time, std::move(cb));
+}
+
+TimerId EventLoop::runEvery(double interval, TimerCallback cb)
+{
+
+}
+
+void EventLoop::cancel(TimerId TimerId)
+{
+
 }
 
 void EventLoop::wakeup()

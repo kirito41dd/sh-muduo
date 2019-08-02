@@ -4,6 +4,8 @@
 #include "sh/base/Mutex.h"
 #include "sh/base/CurrentThread.h"
 #include "sh/base/TimeStamp.h"
+#include "sh/net/TimerId.h"
+#include "sh/net/Callbacks.h"
 
 #include <atomic>
 #include <functional>
@@ -57,6 +59,19 @@ public:
 
     // timers
 
+    /// runs callback at time.
+    /// safe to call from other thread
+    TimerId runAt(TimeStamp time, TimerCallback cb);
+    /// runs callback after @c delay seconds.
+    /// safe to call from other thread
+    TimerId runAfter(double delay, TimerCallback cb);
+    /// runs callback every @c interval(间隔) seconds
+    /// safe ....
+    TimerId runEvery(double interval, TimerCallback cb);
+    /// cancel the timer
+    /// safe ...
+    void cancel(TimerId TimerId);
+
     // 内部使用
     void wakeup();
     void updateChannel(Channel *channel);
@@ -98,7 +113,7 @@ private:
     const pid_t                 threadId_;
     TimeStamp                   pollReturnTime_;
     std::unique_ptr<Poller>     poller_;
-    //**std::unique_ptr<TimerQueue> timerQueue_;
+    std::unique_ptr<TimerQueue> timerQueue_;
     int                         wakeupFd_;
     // unlike in TimerQueue, which is an internal class,
     // we don't expose Channel to client.

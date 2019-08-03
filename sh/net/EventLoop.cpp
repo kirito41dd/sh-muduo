@@ -31,6 +31,20 @@ int createEventfd()
     return evtfd;
 }
 
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+class IgnoreSigPipe
+{
+ public:
+  IgnoreSigPipe()
+  {
+    ::signal(SIGPIPE, SIG_IGN);
+    // LOG_TRACE << "Ignore SIGPIPE";
+  }
+};
+#pragma GCC diagnostic error "-Wold-style-cast"
+
+IgnoreSigPipe initObj; // 忽略 SIGPIPE
+
 } // namespace
 
 namespace sh
@@ -161,12 +175,13 @@ TimerId EventLoop::runAfter(double delay, TimerCallback cb)
 
 TimerId EventLoop::runEvery(double interval, TimerCallback cb)
 {
-
+    TimeStamp time(addTime(TimeStamp::now(), interval));
+    return timerQueue_->addTimer(std::move(cb), time, interval);
 }
 
 void EventLoop::cancel(TimerId TimerId)
 {
-
+    return timerQueue_->cancel(TimerId);
 }
 
 void EventLoop::wakeup()
@@ -183,17 +198,26 @@ void EventLoop::updateChannel(Channel *channel)
 {
     assert(channel->ownerLoop() == this);
     assertInLoopThread();
-    //**poller_->updateChannel(channel);
+    poller_->updateChannel(channel);
 }
 
 void EventLoop::removeChannel(Channel *channel)
 {
-
+    assert(channel->ownerLoop() == this);
+    assertInLoopThread();
+    if (eventHandling_)
+    {
+        assert(currentActiveChannel_ == channel ||
+               std::find(activeChannels_.begin(), activeChannels_.end(), channel) == activeChannels_.end());
+    }
+    poller_->removeChannel(channel);
 }
 
 bool EventLoop::hasChannel(Channel *channel)
 {
-
+    assert(channel->ownerLoop() == this);
+    assertInLoopThread();
+    return poller_->hasChannel(channel);
 }
 
 EventLoop *EventLoop::getEventLoopOfCurrentThread()
@@ -206,6 +230,41 @@ void EventLoop::abortNotInLoopThread()
     LOG_FATAL << "EventLoop::abortNotInLoopThread - EventLoop " << this
               << " was created in threadId_ = " << threadId_
               << ", current thread id = " << CurrentThread::tid();
+}
+
+void EventLoop::handleRead()
+{
+    uint64_t one = 1;
+    ssize_t n = sockets::read(wakeupFd_, &one, sizeof one);
+    if (n != sizeof one)
+    {
+        LOG_ERROR << "EventLoop::handleRead() reads " << n << " bytes instead of 8";
+    }
+}
+
+void EventLoop::doPendingFunctors()
+{
+    std::vector<Functor> functors;
+    callingPendingFunctors_ = true;
+
+    {
+    MutexLockGuard lock(mutex_);
+    functors.swap(pendingFunctors_);
+    }
+
+    for (const Functor &functor : functors)
+    {
+        functor();
+    }
+    callingPendingFunctors_ = false;
+}
+
+void EventLoop::printActiveChannels() const
+{
+    for (const Channel *channel : activeChannels_)
+    {
+        LOG_TRACE << "{" << channel->reventsToString() << "} ";
+    }
 }
 
 } // namespace net

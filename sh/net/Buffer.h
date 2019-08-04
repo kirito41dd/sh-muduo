@@ -141,6 +141,11 @@ public:
         writerInedx_ = kCheapPrepend;
     }
 
+    string retrieveAllAsString()
+    {
+        return retrieveAsString(readableBytes());
+    }
+
     string retrieveAsString(size_t len)
     {
         assert(len <= readableBytes());

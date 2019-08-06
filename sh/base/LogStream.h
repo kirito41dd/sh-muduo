@@ -97,7 +97,7 @@ public:
     self& operator<<(double);
     self& operator<<(float v)
     {
-        *this << static_cast<double>(v);
+        return *this << static_cast<double>(v);
     }
     self& operator<<(char v)
     {

@@ -58,7 +58,7 @@ public:
     { return writerInedx_ - readerIndex_; }
 
     size_t writableBytes() const
-    { buffer_.size() - writerInedx_; }
+    { return buffer_.size() - writerInedx_; }
 
     size_t prependableBytes() const
     { return readerIndex_; }

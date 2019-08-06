@@ -34,7 +34,8 @@ class Socket;
 
 /// 用来表示一个tcp连接，接口类，不暴露太多细节
 class TcpConnection : noncopyable,
-                      std::enable_shared_from_this<TcpConnection>
+                      public std::enable_shared_from_this<TcpConnection> // 这里public一定不能省
+                                        // 省略的话默认是private继承，没法使用shared_from_this()
 {
 public:
     /// 使用一个 connected sockfd 初始化

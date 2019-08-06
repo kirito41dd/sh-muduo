@@ -130,7 +130,8 @@ void TcpConnection::shutdown()
     {
         setState(kDisconnecting);
         loop_->runInLoop(
-                    std::bind(&TcpConnection::shutdownInLoop, /*this*/shared_from_this()));
+                    std::bind(&TcpConnection::shutdownInLoop, shared_from_this()));
+        // 不能传 this , 要保证runinloop时对象还存在，只能传share_ptr
     }
 }
 
@@ -179,6 +180,7 @@ void TcpConnection::connectEstablished()
     loop_->assertInLoopThread();
     assert(state_ == kConnecting);
     setState(kConnected);
+
     channel_->tie(shared_from_this());
     channel_->enableReading();
 

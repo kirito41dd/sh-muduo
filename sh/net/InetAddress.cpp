@@ -7,6 +7,7 @@
 
 #include <netdb.h>
 #include <netinet/in.h>
+#include <stddef.h> // for offsetof
 
 //     /* Structure describing an Internet socket address.  */
 //     struct sockaddr_in {

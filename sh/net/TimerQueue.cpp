@@ -4,7 +4,14 @@
 // 宏( 如 UINT8_MAX 。INT64_MIN 和 INT32_C() ) 可能已经在 C++ 程序中定定义其他方式。
 // 为了允许用户決定是否需要为c 定义宏，
 // 许多实现需要在 stdint.h 包含之前定义 __STDC_LIMIT_MACROS 和 __STDC_CONSTANT_MACROS 。
-// 这不是 C++ 标准的一部分，但它已经被许多实现所采用。 **这里主要是为了使用 timerfd ?
+// 这不是 C++ 标准的一部分，但它已经被许多实现所采用。
+
+// __STDC_LIMIT_MACROS and __STDC_CONSTANT_MACROS are a workaround to allow C++ programs to use stdint.h
+// macros specified in the C99 standard that aren't in the C++ standard. The macros, such as UINT8_MAX, INT64_MIN,
+// and INT32_C() may be defined already in C++ applications in other ways. To allow the user to decide
+// if they want the macros defined as C99 does, many implementations require that __STDC_LIMIT_MACROS
+// and __STDC_CONSTANT_MACROS be defined before stdint.h is included.
+// This isn't part of the C++ standard, but it has been adopted by more than one implementation.
 
 #ifndef __STDC_LIMIT_MACROS
 #define __STDC_LIMIT_MACROS

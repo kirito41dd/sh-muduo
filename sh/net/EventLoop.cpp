@@ -145,6 +145,7 @@ void EventLoop::runInLoop(EventLoop::Functor cb)
     else
     {
         queueInLoop(std::move(cb));
+        wakeup(); // fixbug 这里应该唤醒loop，立即执行任务
     }
 }
 

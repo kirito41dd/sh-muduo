@@ -36,7 +36,7 @@ public:
 
 private:
     enum States { kDisconnected, kConnecting, kConnected };
-    static const int kMaxRetryDelayMs = 30*1000;
+    static const int kMaxRetryDelayMs = 30*1000; // 声明+初始化 没有定义
     static const int kInitRetryDelayMs = 500;
 
     void setState(States s) { state_ = s; }

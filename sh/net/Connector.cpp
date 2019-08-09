@@ -11,6 +11,7 @@
 using namespace sh;
 using namespace net;
 
+const int Connector::kMaxRetryDelayMs; // 定义
 
 Connector::Connector(EventLoop *loop, const InetAddress &serverAddr)
     : loop_(loop),

@@ -39,17 +39,17 @@ public:
 
     /// Set connection callback.
     /// Not thread safe.
-    void setConnectionCallback(ConnectionCallback &cb)
+    void setConnectionCallback(const ConnectionCallback &cb)
     { connectionCallback_ = cb; }
 
     /// Set message callback.
     /// Not thread safe.
-    void setMessageCallback(MessageCallback &cb)
+    void setMessageCallback(const MessageCallback &cb)
     { messageCallback_ = cb; }
 
     /// Set write complete callback.
     /// Not thread safe.
-    void setWriteCompleteCallback(WriteCompleteCallback &cb)
+    void setWriteCompleteCallback(const WriteCompleteCallback &cb)
     { WriteCompleteCallback_ = cb; }
 
 private:

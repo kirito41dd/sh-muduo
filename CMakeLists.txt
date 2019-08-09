@@ -5,7 +5,7 @@ project(sh_muduo)
 # add the source in project root directory
 aux_source_directory(. DIR_SRC)
 
-add_compile_options(-std=c++11)
+add_compile_options(-std=c++11 -Wall)
 
 # add header file include directories
 #include_directories(./ ./sh/net ./sh/base)  # 可以不要后俩个，#include "sh/net/*.h" 这么写

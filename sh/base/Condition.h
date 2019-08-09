@@ -24,6 +24,7 @@ public:
     ~Condition()
     {
         int ret = pthread_cond_destroy(&pcond_);
+        (void)ret;
     }
 
     void wait()

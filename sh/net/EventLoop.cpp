@@ -145,7 +145,6 @@ void EventLoop::runInLoop(EventLoop::Functor cb)
     else
     {
         queueInLoop(std::move(cb));
-        wakeup(); // fixbug 这里应该唤醒loop，立即执行任务
     }
 }
 
@@ -154,6 +153,11 @@ void EventLoop::queueInLoop(EventLoop::Functor cb)
     {
     MutexLockGuard lock(mutex_);
     pendingFunctors_.push_back(std::move(cb));
+    }
+
+    if (!isInLoopThread() || callingPendingFunctors_)
+    {
+        wakeup(); // 这个唤醒保证函数及时被执行
     }
 }
 

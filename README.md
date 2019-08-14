@@ -22,6 +22,36 @@ echo "/usr/local/lib" >> /etc/ld.so.conf
 ldconfig
 ```
 
+一个简单的例子： test.cpp
+```cpp
+#include <iostream>
+#include <sh/net/EventLoop.h>
+
+using namespace std;
+
+void cb()
+{
+    cout << "hellow" << endl;
+}
+
+int main()
+{
+    sh::net::EventLoop loop;
+    loop.runEvery(1,cb);
+    loop.loop();
+    return 0;
+}
+
+```
+```bash
+g++ test.cpp -lsh_net -o test
+./test
+hellow
+hellow
+^C
+```
+
+
 ## 记录一下学到的东西
 override描述符：虚函数声明时使用了override描述符,派生类必须重载虚函数，否则代码将无法通过编译。`base/Exception.h`
 

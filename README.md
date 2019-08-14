@@ -9,6 +9,17 @@ cmake ../sh-muduo/   # install 默认安装到 /usr/local/ 或设置 CMAKE_INSTA
 make
 make install
 ```
+由于默认的搜索路径是 /usr/lib 和 /lib
+可以吧 /usr/local/lib/ 下的 libsh_base.so libsh_net.so 创建链接
+```bash
+sudo ln -s /usr/local/lib/libsh_*.so /usr/lib
+sudo ldconfig
+```
+或者使用root用户
+```bash
+echo "/usr/local/lib" >> /etc/ld.so.conf
+ldconfig
+```
 
 ## 记录一下学到的东西
 override描述符：虚函数声明时使用了override描述符,派生类必须重载虚函数，否则代码将无法通过编译。`base/Exception.h`

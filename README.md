@@ -9,7 +9,8 @@ cmake ../sh-muduo/   # install 默认安装到 /usr/local/ 或设置 CMAKE_INSTA
 make
 make install
 ```
-由于默认的搜索路径是 /usr/lib 和 /lib
+由于动态库默认的搜索路径是 /usr/lib 和 /lib
+
 可以吧 /usr/local/lib/ 下的 libsh_base.so libsh_net.so 创建链接
 ```bash
 sudo ln -s /usr/local/lib/libsh_*.so /usr/lib

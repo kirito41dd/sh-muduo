@@ -1,6 +1,15 @@
 # sh-muduo
 学习muduo网络库，试着自己实现一遍
 
+安装：
+```bash
+git clone https://github.com/zshorz/sh-muduo.git sh-muduo
+mkdir build && cd build
+cmake ../sh-muduo/   # install 默认安装到 /usr/local/ 或设置 CMAKE_INSTALL_PREFIX
+make
+make install
+```
+
 ## 记录一下学到的东西
 override描述符：虚函数声明时使用了override描述符,派生类必须重载虚函数，否则代码将无法通过编译。`base/Exception.h`
 

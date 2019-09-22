@@ -20,7 +20,7 @@ add_executable(sh_muduo ${DIR_SRC})
 target_link_libraries(sh_muduo sh_base sh_net)
 
 
-option(SH_BUILD_TESTS "Build sh-muduo tests" OFF)
+option(SH_BUILD_TESTS "Build sh-muduo tests" ON)
 if(SH_BUILD_TESTS)
     add_subdirectory(test)
 endif()

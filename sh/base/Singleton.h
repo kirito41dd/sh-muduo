@@ -22,6 +22,8 @@ public:
     static T& instance()
     {
         // pthread_once(&ponce_, &Singleton::init);
+        if(value_ != NULL)
+            return *value_;
         init();
         assert(value_ != NULL);
         return *value_;

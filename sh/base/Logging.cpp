@@ -98,6 +98,7 @@ Logger::Impl::Impl(Logger::Impl::LogLevel level, int old_errno, const Logger::So
     formatTime();
     CurrentThread::tid();
     stream_ << T(CurrentThread::tidString(), CurrentThread::tidStringLength());
+    stream_ << " "; // 添加空格分隔
     stream_ << T(LogLevelName[level], 6);
     if(old_errno != 0)
     {

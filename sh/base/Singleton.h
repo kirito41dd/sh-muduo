@@ -6,7 +6,7 @@
 
 #include <sh/base/noncopyable.h>
 #include <stdlib.h> // for atexit
-// #include <pthread.h>
+#include <pthread.h>
 #include <assert.h>
 
 namespace sh
@@ -21,10 +21,8 @@ public:
 
     static T& instance()
     {
-        // pthread_once(&ponce_, &Singleton::init);
-        if(value_ != NULL)
-            return *value_;
-        init();
+        ::pthread_once(&ponce_, &Singleton::init);
+
         assert(value_ != NULL);
         return *value_;
     }
@@ -42,12 +40,12 @@ private:
         value_ = NULL;
     }
 
-    // static pthread_once_t   ponce_;
+    static pthread_once_t   ponce_;
     static T*               value_;
 }; // class Singleton
 
-// template<typename T>
-// pthread_once_t Singleton<T>::ponce_ = PTHREAD_ONCE_INIT;
+template<typename T>
+pthread_once_t Singleton<T>::ponce_ = PTHREAD_ONCE_INIT;
 
 template<typename T>
 T* Singleton<T>::value_ = NULL;

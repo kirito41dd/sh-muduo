@@ -1,5 +1,6 @@
 # sh-muduo
-[![](https://img.shields.io/github/stars/zshorz/sh-muduo?style=social)](https://github.com/zshorz//sh-muduo/stargazers) [![](https://img.shields.io/github/languages/top/zshorz//sh-muduo?style=plastic)](https://github.com/zshorz//sh-muduo) [![](https://img.shields.io/github/last-commit/zshorz//sh-muduo)](https://github.com/zshorz//sh-muduo/commits/master)
+[![](https://img.shields.io/github/stars/zshorz/sh-muduo?style=social)](https://github.com/zshorz/sh-muduo/stargazers) [![](https://img.shields.io/github/languages/top/zshorz/sh-muduo?style=plastic)](https://github.com/zshorz/sh-muduo) [![](https://img.shields.io/github/last-commit/zshorz/sh-muduo)](https://github.com/zshorz/sh-muduo/commits/master)
+
 学习muduo网络库，试着自己实现一遍
 
 安装：

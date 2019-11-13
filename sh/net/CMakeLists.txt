@@ -12,3 +12,5 @@ install(TARGETS sh_net LIBRARY DESTINATION lib)
 
 #FILE(GLOB HEADERS "*.h")
 #add_custom_target(sh_net_headers SOURCES ${HEADERS})
+
+add_subdirectory(./http)

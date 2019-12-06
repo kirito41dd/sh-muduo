@@ -4,6 +4,7 @@
 #include <sh/net/EventLoop.h>
 #include <sh/net/TcpServer.h>
 #include <sh/base/TimeStamp.h>
+#include <sh/base/Logging.h>
 #include <iostream>
 
 
@@ -28,6 +29,8 @@ void newMsg(const TcpConnectionPtr &conn, Buffer *buf, TimeStamp stamp) {
 }
 
 int main() {
+    // 不进行不必要的日志输出
+    Logger::setLogLevel(Logger::ERROR);
 
     EventLoop loop;
     InetAddress addr("127.0.0.1", 9999);

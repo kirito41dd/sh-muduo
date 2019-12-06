@@ -21,7 +21,13 @@ target_link_libraries(sh_muduo sh_base sh_net)
 
 
 option(SH_BUILD_TESTS "Build sh-muduo tests" ON)
+option(SH_BUILD_EXAMPLE "Build sh-muduo example" ON)
+
 if(SH_BUILD_TESTS)
     add_subdirectory(test)
+endif()
+
+if(SH_BUILD_EXAMPLE)
+    add_subdirectory(example)
 endif()
 

@@ -9,7 +9,7 @@ git clone https://github.com/zshorz/sh-muduo.git sh-muduo
 mkdir build && cd build
 cmake ../sh-muduo/   # install 默认安装到 /usr/local/ 或设置 CMAKE_INSTALL_PREFIX
 make
-make install
+sudo make install
 ```
 由于动态库默认的搜索路径是 /usr/lib 和 /lib
 
@@ -74,5 +74,5 @@ gcc从4.1.2提供了__sync_*系列的built-in函数，用于提供加减和逻�
 offsetof(TYPE, MEMBER)： 这个宏来测量成员在结构中的偏移 InetAddress.cpp #46
 
 std::enable_shared_from_this<T> : TcpConnection.h
-  
+
 const static int knum = 10 ： 在头文件定义类成员，这种只是声明+初始化（仅支持整型bool也算），没有定义，不能用使用引用传参（因为没有分配内存，但可以传值）。使用引用必须在.cpp文件定义
